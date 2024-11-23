@@ -2,12 +2,14 @@ import { useEffect, useRef } from "react";
 
 export default function Index() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoOverlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (videoRef.current) {
+      if (videoRef.current && videoOverlayRef.current) {
         const scrollY = window.scrollY;
         videoRef.current.style.transform = `translateY(${scrollY * 0.5}px)`;
+        videoOverlayRef.current.style.backgroundColor = `hsl(var(--background) / ${Math.min(0.2 + scrollY / window.screen.height, 1)})`;
       }
     };
 
@@ -29,7 +31,7 @@ export default function Index() {
           <source src="/assets/full_hd.webm" type="video/webm" />
           Your browser does not support the video tag.
         </video>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full px-4">
+        <div ref={videoOverlayRef} className="relative z-10 flex flex-col items-center justify-center h-full px-4 bg-background/20">
           <h1 className="text-4xl md:text-6xl font-bold drop-shadow-md">
             Welcome to Saga Farmann
           </h1>
