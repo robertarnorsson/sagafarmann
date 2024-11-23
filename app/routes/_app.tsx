@@ -4,7 +4,7 @@ import Header from "~/components/nav/header";
 
 export default function AppLayout() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-x-hidden">
       <Header />
       <main className="flex-grow">
         <Outlet />
