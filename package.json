@@ -15,10 +15,12 @@
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.1.0",
     "@hookform/resolvers": "^3.9.1",
     "@icons-pack/react-simple-icons": "^10.1.0",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@remix-run/cloudflare": "^2.14.0",
     "@remix-run/cloudflare-pages": "^2.14.0",
@@ -28,6 +30,7 @@
     "isbot": "^4.1.0",
     "lucide-react": "^0.460.0",
     "motion": "^11.11.17",
+    "ol": "^10.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.53.2",

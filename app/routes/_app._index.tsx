@@ -1,6 +1,9 @@
 import { Link, MetaFunction } from "@remix-run/react";
 import { useEffect, useRef } from "react";
+import TripsMapSidebar from "~/components/common/TripsMapSidebar";
+import TripsMap from "~/components/map/TripsMap";
 import { Button } from "~/components/ui/button";
+import { MapProvider } from "~/context/MapContext";
 
 export const meta: MetaFunction = () => {
   return [
@@ -54,11 +57,18 @@ export default function Index() {
           </Link>
         </div>
       </div>
-      <div className="h-screen w-full">
-        <div className="flex flex-col items-center justify-center h-full">
-          <h2 className="text-3xl font-bold">More Content</h2>
+      <MapProvider>
+        <div className="h-screen w-full flex justify-center items-center px-4">
+          <div
+            className="flex flex-col md:flex-row rounded-lg shadow-lg overflow-hidden w-full h-3/4 max-w-6xl"
+          >
+            <div className="flex-grow rounded-t-lg md:rounded-l-lg md:rounded-t-none overflow-hidden">
+              <TripsMap />
+            </div>
+            <TripsMapSidebar />
+          </div>
         </div>
-      </div>
+      </MapProvider>
     </div>
   );
 }

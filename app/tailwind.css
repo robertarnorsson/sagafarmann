@@ -33,11 +33,22 @@
 }
 
 @layer base {
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  * {
+    scrollbar-width: thin;
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    overflow: overlay;
   }
 
   .fancy-underline {

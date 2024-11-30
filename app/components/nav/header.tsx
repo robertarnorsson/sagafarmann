@@ -44,7 +44,7 @@ export default function Header() {
             side="right"
             closeButton={false}
             aria-describedby=""
-            className="z-50 bg-background/20 backdrop-blur-sm border-none"
+            className="z-50 bg-background/60 backdrop-blur-lg border-none"
           >
             <nav className="grid gap-4 text-lg font-medium">
               <SheetClose className="absolute right-4 top-4">
