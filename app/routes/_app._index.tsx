@@ -4,7 +4,7 @@ import TripsMapSidebar from "~/components/common/TripsMapSidebar";
 import TripsMap from "~/components/map/TripsMap";
 import { Button } from "~/components/ui/button";
 import { MapProvider } from "~/context/MapContext";
-import { Stage, Trip } from "~/types";
+import { Stage, Trip, Waypoint } from "~/types";
 
 export const meta: MetaFunction = () => {
   return [
@@ -16,25 +16,32 @@ export const meta: MetaFunction = () => {
 export async function loader() {
   const tripsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/trips";
   const stagesUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/stages";
+  const waypointsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/waypoints";
 
   const tripsResponse = await fetch(tripsUrl);
   const stagesResponse = await fetch(stagesUrl);
+  const waypointsResponse = await fetch(waypointsUrl);
 
   if (!tripsResponse.ok) {
-    throw new Response("Failed to load trips data", { status: tripsResponse.status });
+    throw new Response("Failed to load trip data", { status: tripsResponse.status });
   }
 
   if (!stagesResponse.ok) {
-    throw new Response("Failed to load stages data", { status: stagesResponse.status });
+    throw new Response("Failed to load stage data", { status: stagesResponse.status });
+  }
+
+  if (!waypointsResponse.ok) {
+    throw new Response("Failed to load waypoint data", { status: waypointsResponse.status });
   }
 
   const trips = await tripsResponse.json<Trip[]>();
   const stages = await stagesResponse.json<Stage[]>();
-  return { trips, stages };
+  const waypoints = await waypointsResponse.json<Waypoint[]>();
+  return { trips, stages, waypoints };
 }
 
 export default function Index() {
-  const { trips, stages } = useLoaderData<typeof loader>();
+  const { trips, stages, waypoints } = useLoaderData<typeof loader>();
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoOverlayRef = useRef<HTMLDivElement>(null);
 
@@ -84,14 +91,11 @@ export default function Index() {
           <div
             className="flex flex-col md:flex-row rounded-lg shadow-lg overflow-hidden w-full h-3/4 max-w-6xl"
           >
-            {/* Map Component */}
             <div className="flex-grow h-2/3 md:h-full rounded-t-lg md:rounded-l-lg md:rounded-t-none overflow-hidden">
               <TripsMap />
             </div>
-
-            {/* Sidebar Component */}
             <div className="w-full h-1/3 md:h-full md:w-1/3">
-              <TripsMapSidebar trips={trips} stages={stages} />
+              <TripsMapSidebar trips={trips} stages={stages} waypoints={waypoints} />
             </div>
           </div>
         </div>

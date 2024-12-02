@@ -4,7 +4,7 @@ import { Mail, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-background text-primary border-t border-border py-8">
+    <footer className="bg-secondary text-foreground border-t border-border py-8">
       <div className="container px-4 lg:px-6 mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start gap-8">
           <div className="flex-1">
@@ -49,7 +49,7 @@ export default function Footer() {
             href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-white transition duration-300"
+            className="text-muted-foreground hover:text-foreground transition duration-300"
           >
             <SiFacebook />
           </a>
@@ -57,7 +57,7 @@ export default function Footer() {
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-white transition duration-300"
+            className="text-muted-foreground hover:text-foreground transition duration-300"
           >
             <SiInstagram />
           </a>
@@ -65,7 +65,7 @@ export default function Footer() {
             href="https://youtube.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-white transition duration-300"
+            className="text-muted-foreground hover:text-foreground transition duration-300"
           >
             <SiYoutube />
           </a>
@@ -80,7 +80,7 @@ export default function Footer() {
               href="https://robertarnorsson.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:underline text-primary/80"
+              className="hover:underline text-foreground/80"
             >
               Robert Arnorsson
             </a>

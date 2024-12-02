@@ -1,21 +1,31 @@
 import React, { createContext, useContext, useRef } from 'react';
 import type { Map } from 'ol';
 import { fromLonLat } from 'ol/proj';
+import VectorSource from 'ol/source/Vector';
+import VectorLayer from 'ol/layer/Vector';
+import { Feature } from 'ol';
+import LineString from 'ol/geom/LineString';
+import Point from 'ol/geom/Point';
+import { Style, Stroke, Circle as CircleStyle, Fill } from 'ol/style';
+import { Coordinate } from 'ol/coordinate';
 
 interface MapContextType {
   map: React.MutableRefObject<Map | null>;
   setCenter: (coords: [number, number]) => void;
   setZoom: (zoomLevel: number) => void;
   flyTo: (coords: [number, number], zoom?: number) => void;
+  addWaypoints: (waypoints: Coordinate[]) => void;
+  removeWaypoints: () => void;
 }
 
 const MapContext = createContext<MapContextType | undefined>(undefined);
 
 export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const map = useRef<Map | null>(null);
+  const waypointLayerRef = useRef<VectorLayer | null>(null);
 
   const setCenter = (coords: [number, number]) => {
-    map.current?.getView().setCenter(coords);
+    map.current?.getView().setCenter(fromLonLat(coords));
   };
 
   const setZoom = (zoomLevel: number) => {
@@ -32,10 +42,68 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         duration: 500,
       });
     }
-  };  
+  };
+
+  const addWaypoints = (waypoints: Coordinate[]) => {
+    if (!map.current) return;
+
+    removeWaypoints();
+
+    const vectorSource = new VectorSource();
+    if (waypoints.length === 1) {
+      // Create a Point feature if there's only one waypoint
+      const pointFeature = new Feature({
+        geometry: new Point(waypoints[0]),
+      });
+
+      const pointStyle = new Style({
+        image: new CircleStyle({
+          radius: 6,
+          fill: new Fill({ color: '#FF0000' }), // Red point color
+          stroke: new Stroke({ color: '#FFFFFF', width: 2 }),
+        }),
+      });
+
+      pointFeature.setStyle(pointStyle);
+      vectorSource.addFeature(pointFeature);
+    } else if (waypoints.length > 1) {
+      // Create a LineString feature for multiple waypoints
+      const lineString = new LineString(waypoints);
+
+      const lineFeature = new Feature({
+        geometry: lineString,
+      });
+
+      const lineStyle = new Style({
+        stroke: new Stroke({
+          color: '#FF0000', // Red line color
+          width: 2,
+        }),
+      });
+
+      lineFeature.setStyle(lineStyle);
+      vectorSource.addFeature(lineFeature);
+    }
+
+    const waypointLayer = new VectorLayer({
+      source: vectorSource,
+    });
+
+    map.current.addLayer(waypointLayer);
+    waypointLayerRef.current = waypointLayer;
+  };
+
+  const removeWaypoints = () => {
+    if (map.current && waypointLayerRef.current) {
+      map.current.removeLayer(waypointLayerRef.current);
+      waypointLayerRef.current = null;
+    }
+  };
 
   return (
-    <MapContext.Provider value={{ map, setCenter, setZoom, flyTo }}>
+    <MapContext.Provider
+      value={{ map, setCenter, setZoom, flyTo, addWaypoints, removeWaypoints }}
+    >
       {children}
     </MapContext.Provider>
   );

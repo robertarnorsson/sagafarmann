@@ -6,29 +6,29 @@
   :root {
     --background: 195 21% 15%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 195 21% 35%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+    --card: 195 22% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 92%;
+    --primary: 354 75% 44%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 195 15% 25%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 75%;
+    --accent: 0 85% 45%; /* Vibrant red accent for consistency */
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --radius: 0.5rem;
+    --destructive: 0 60% 40%; /* Slightly lighter red for destructive actions */
+    --destructive-foreground: 0 0% 95%;
+    --border: 0 0% 25%;
+    --input: 0 0% 20%;
+    --ring: 350 70% 50%; /* Red ring for focus states */
+    --chart-1: 350 70% 40%; /* Matches primary red */
+    --chart-2: 160 55% 45%; /* Teal */
+    --chart-3: 45 80% 50%; /* Yellow */
+    --chart-4: 290 65% 65%; /* Purple */
+    --chart-5: 340 70% 60%; /* Pink */
+    --radius: 0.75rem;
   }
 }
 

@@ -1,19 +1,110 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Separator } from "../ui/separator";
 import { TextAnimation } from "~/components/common/TextAnimation";
-import { Stage, Trip } from "~/types";
+import { Stage, Trip, Waypoint } from "~/types";
+import { useMap } from "~/context/MapContext";
+import { fromLonLat } from "ol/proj";
 
 interface TripsMapSidebarProps {
   trips: Trip[];
   stages: Stage[];
+  waypoints: Waypoint[];
 }
 
-export default function TripsMapSidebar({ trips, stages }: TripsMapSidebarProps) {
+export default function TripsMapSidebar({ trips, stages, waypoints }: TripsMapSidebarProps) {
+  const { map, addWaypoints, removeWaypoints } = useMap();
+
   const [page, setPage] = useState<"trips" | "stages" | "info">("trips");
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [selectedStage, setSelectedStage] = useState<Stage | null>(null);
+
+  // Dynamically handle waypoints based on the current page and selection
+  useEffect(() => {
+    removeWaypoints();
+
+    if (page === "trips") {
+      // Show all waypoints for all stages in all trips
+      const allWaypoints = waypoints.map((waypoint) =>
+        fromLonLat([waypoint.longitude, waypoint.latitude])
+      );
+
+      if (allWaypoints.length === 1) {
+        addWaypoints(allWaypoints);
+        map.current?.getView().animate({ center: allWaypoints[0], zoom: 10, duration: 500 });
+      } else if (allWaypoints.length > 1) {
+        addWaypoints(allWaypoints);
+
+        const extent = allWaypoints.reduce(
+          (extent, coord) => {
+            extent[0] = Math.min(extent[0], coord[0]); // Min X (Longitude)
+            extent[1] = Math.min(extent[1], coord[1]); // Min Y (Latitude)
+            extent[2] = Math.max(extent[2], coord[0]); // Max X (Longitude)
+            extent[3] = Math.max(extent[3], coord[1]); // Max Y (Latitude)
+            return extent;
+          },
+          [Infinity, Infinity, -Infinity, -Infinity]
+        );
+
+        map.current?.getView().fit(extent, { padding: [50, 50, 50, 50], duration: 500 });
+      }
+    } else if (page === "stages" && selectedTrip) {
+      // Show all waypoints for the selected trip
+      const tripWaypoints = stages
+        .filter((stage) => stage.trip_id === selectedTrip.id)
+        .flatMap((stage) =>
+          waypoints
+            .filter((waypoint) => waypoint.stage_id === stage.id)
+            .map((waypoint) => fromLonLat([waypoint.longitude, waypoint.latitude]))
+        );
+
+      if (tripWaypoints.length === 1) {
+        addWaypoints(tripWaypoints);
+        map.current?.getView().animate({ center: tripWaypoints[0], zoom: 10, duration: 500 });
+      } else if (tripWaypoints.length > 1) {
+        addWaypoints(tripWaypoints);
+
+        const extent = tripWaypoints.reduce(
+          (extent, coord) => {
+            extent[0] = Math.min(extent[0], coord[0]); // Min X (Longitude)
+            extent[1] = Math.min(extent[1], coord[1]); // Min Y (Latitude)
+            extent[2] = Math.max(extent[2], coord[0]); // Max X (Longitude)
+            extent[3] = Math.max(extent[3], coord[1]); // Max Y (Latitude)
+            return extent;
+          },
+          [Infinity, Infinity, -Infinity, -Infinity]
+        );
+
+        map.current?.getView().fit(extent, { padding: [50, 50, 50, 50], duration: 500 });
+      }
+    } else if (page === "info" && selectedStage) {
+      // Show waypoints for the selected stage
+      const stageWaypoints = waypoints
+        .filter((waypoint) => waypoint.stage_id === selectedStage.id)
+        .map((waypoint) => fromLonLat([waypoint.longitude, waypoint.latitude]));
+
+      if (stageWaypoints.length === 1) {
+        addWaypoints(stageWaypoints);
+        map.current?.getView().animate({ center: stageWaypoints[0], zoom: 10, duration: 500 });
+      } else if (stageWaypoints.length > 1) {
+        addWaypoints(stageWaypoints);
+
+        const extent = stageWaypoints.reduce(
+          (extent, coord) => {
+            extent[0] = Math.min(extent[0], coord[0]); // Min X (Longitude)
+            extent[1] = Math.min(extent[1], coord[1]); // Min Y (Latitude)
+            extent[2] = Math.max(extent[2], coord[0]); // Max X (Longitude)
+            extent[3] = Math.max(extent[3], coord[1]); // Max Y (Latitude)
+            return extent;
+          },
+          [Infinity, Infinity, -Infinity, -Infinity]
+        );
+
+        map.current?.getView().fit(extent, { padding: [50, 50, 50, 50], duration: 500 });
+      }
+    }
+  }, [page, selectedTrip, selectedStage, stages, waypoints, map, addWaypoints, removeWaypoints]);
 
   const handleBack = () => {
     if (page === "info") {
@@ -27,14 +118,9 @@ export default function TripsMapSidebar({ trips, stages }: TripsMapSidebarProps)
     ? stages.filter((stage) => stage.trip_id === selectedTrip.id)
     : [];
 
-  const handleStageClick = (stage: Stage) => {
-    setSelectedStage(stage);
-    setPage("info");
-  };
-
   return (
     <div className="w-full md:w-64 lg:w-96 bg-secondary shadow-md rounded-b-lg md:rounded-r-lg md:rounded-b-none overflow-x-hidden relative flex flex-col h-full">
-      <div className="bg-secondary text-primary flex items-center justify-between p-4 flex-none h-16">
+      <div className="bg-secondary text-foreground flex items-center justify-between p-4 flex-none h-16">
         <div className="relative w-full flex items-center gap-2">
           <div
             className={`absolute left-0 transition-all duration-500 ease-in-out ${
@@ -81,7 +167,7 @@ export default function TripsMapSidebar({ trips, stages }: TripsMapSidebarProps)
               <Button
                 key={trip.id}
                 variant="ghost"
-                className="w-full text-left hover:bg-primary/10 rounded"
+                className="w-full text-left hover:bg-foreground/10 rounded"
                 onClick={() => {
                   setSelectedTrip(trip);
                   setPage("stages");
@@ -98,8 +184,11 @@ export default function TripsMapSidebar({ trips, stages }: TripsMapSidebarProps)
               <Button
                 key={stage.id}
                 variant="ghost"
-                className="w-full text-left hover:bg-primary/10 rounded"
-                onClick={() => handleStageClick(stage)}
+                className="w-full text-left hover:bg-foreground/10 rounded"
+                onClick={() => {
+                  setSelectedStage(stage);
+                  setPage("info");
+                }}
               >
                 <span className="w-full">{`${stage.departure_port} - ${stage.arrival_port}`}</span>
               </Button>
@@ -122,10 +211,6 @@ export default function TripsMapSidebar({ trips, stages }: TripsMapSidebarProps)
               </p>
               <p className="text-sm">
                 <strong>Arrival Date:</strong> {selectedStage.arrival_date}
-              </p>
-              {/* Placeholder for waypoint functionality */}
-              <p className="mt-4 text-sm italic text-muted-foreground">
-                Waypoints functionality coming soon!
               </p>
             </div>
           ) : (
