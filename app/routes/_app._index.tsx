@@ -1,9 +1,10 @@
-import { Link, MetaFunction } from "@remix-run/react";
+import { Link, MetaFunction, useLoaderData } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 import TripsMapSidebar from "~/components/common/TripsMapSidebar";
 import TripsMap from "~/components/map/TripsMap";
 import { Button } from "~/components/ui/button";
 import { MapProvider } from "~/context/MapContext";
+import { Stage, Trip } from "~/types";
 
 export const meta: MetaFunction = () => {
   return [
@@ -12,7 +13,28 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function loader() {
+  const tripsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/trips";
+  const stagesUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/stages";
+
+  const tripsResponse = await fetch(tripsUrl);
+  const stagesResponse = await fetch(stagesUrl);
+
+  if (!tripsResponse.ok) {
+    throw new Response("Failed to load trips data", { status: tripsResponse.status });
+  }
+
+  if (!stagesResponse.ok) {
+    throw new Response("Failed to load stages data", { status: stagesResponse.status });
+  }
+
+  const trips = await tripsResponse.json<Trip[]>();
+  const stages = await stagesResponse.json<Stage[]>();
+  return { trips, stages };
+}
+
 export default function Index() {
+  const { trips, stages } = useLoaderData<typeof loader>();
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoOverlayRef = useRef<HTMLDivElement>(null);
 
@@ -62,10 +84,15 @@ export default function Index() {
           <div
             className="flex flex-col md:flex-row rounded-lg shadow-lg overflow-hidden w-full h-3/4 max-w-6xl"
           >
-            <div className="flex-grow rounded-t-lg md:rounded-l-lg md:rounded-t-none overflow-hidden">
+            {/* Map Component */}
+            <div className="flex-grow h-2/3 md:h-full rounded-t-lg md:rounded-l-lg md:rounded-t-none overflow-hidden">
               <TripsMap />
             </div>
-            <TripsMapSidebar />
+
+            {/* Sidebar Component */}
+            <div className="w-full h-1/3 md:h-full md:w-1/3">
+              <TripsMapSidebar trips={trips} stages={stages} />
+            </div>
           </div>
         </div>
       </MapProvider>

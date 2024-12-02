@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import 'ol/ol.css';
 import { Map, View } from 'ol';
-import { OSM } from 'ol/source';
+import { XYZ } from 'ol/source';
 import TileLayer from 'ol/layer/Tile';
 import { useMap } from '~/context/MapContext';
 
@@ -16,12 +16,18 @@ const TripsMap: React.FC = () => {
     const view = new View({
       center: [0, 0],
       zoom: 2,
+      maxZoom: 20
     });
 
     const layer = new TileLayer({
-      source: new OSM({
-        crossOrigin: 'anonymous',
-        interpolate: true,
+      source: new XYZ({
+        urls: [
+          'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+          'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+          'https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+          'https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+        ],
+        attributions: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       }),
       cacheSize: 128,
       preload: 128

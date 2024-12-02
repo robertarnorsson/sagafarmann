@@ -24,7 +24,7 @@ export function TextAnimation({ children, className = "" }: TextAnimationProps) 
   return (
     <span
       className={`inline-block transition-opacity duration-200 ${
-        isAnimating ? "opacity-0" : "opacity-100"
+        isAnimating ? "opacity-0" : "opacity-200"
       } ${className}`}
     >
       {displayedText}
