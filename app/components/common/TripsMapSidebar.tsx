@@ -33,7 +33,7 @@ export default function TripsMapSidebar({ trips, stages }: TripsMapSidebarProps)
   };
 
   return (
-    <div className="w-full md:w-64 lg:w-96 bg-secondary shadow-md rounded-b-lg md:rounded-r-lg md:rounded-b-none overflow-hidden relative flex flex-col h-full">
+    <div className="w-full md:w-64 lg:w-96 bg-secondary shadow-md rounded-b-lg md:rounded-r-lg md:rounded-b-none overflow-x-hidden relative flex flex-col h-full">
       <div className="bg-secondary text-primary flex items-center justify-between p-4 flex-none h-16">
         <div className="relative w-full flex items-center gap-2">
           <div
@@ -106,7 +106,7 @@ export default function TripsMapSidebar({ trips, stages }: TripsMapSidebarProps)
             ))}
           </div>
         </div>
-        <div className="w-full flex-shrink-0 p-4 box-border overflow-y-auto">
+        <div className="w-full flex-shrink-0 p-4 box-border">
           {selectedStage ? (
             <div>
               <h2 className="text-lg font-semibold">{selectedStage.name}</h2>
