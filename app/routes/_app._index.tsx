@@ -15,9 +15,9 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  const tripsUrl = "http://127.0.0.1:8787/trips";
-  const stagesUrl = "http://127.0.0.1:8787/stages";
-  const waypointsUrl = "http://127.0.0.1:8787/waypoints";
+  const tripsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/trips";
+  const stagesUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/stages";
+  const waypointsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/waypoints";
 
   const headers = {
     'Authorization': `Bearer ${context.cloudflare.env.API_TOKEN}`
