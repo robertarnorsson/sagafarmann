@@ -27,3 +27,11 @@ export type Waypoint = {
   latitude: number;
   longitude: number;
 };
+
+export type SosialMedia = {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  url: string;
+};

@@ -1,16 +1,20 @@
+import { Link } from "@remix-run/react";
 
 interface SosialMediaCardProps {
   title: string;
   description: string;
   image: string;
+  url: string
 }
 
-export default function SosialMediaCard({ title, description, image }: SosialMediaCardProps) {
+export default function SosialMediaCard({ title, description, image, url }: SosialMediaCardProps) {
   return (
-    <div className="flex ">
-      <img src={image} alt="title" />
-      {title}
-      {description}
-    </div>
+    <Link to={url}>
+      <div className="flex ">
+        <img src={image} alt="title" />
+        {title}
+        {description}
+      </div>
+    </Link>
   )
 }

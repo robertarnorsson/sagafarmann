@@ -1,11 +1,12 @@
 import { LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { Link, MetaFunction, useLoaderData } from "@remix-run/react";
 import { useEffect, useRef } from "react";
+import SosialMediaCard from "~/components/common/SosialMediaCard";
 import TripsMapSidebar from "~/components/common/TripsMapSidebar";
 import TripsMap from "~/components/map/TripsMap";
 import { Button } from "~/components/ui/button";
 import { MapProvider } from "~/context/MapContext";
-import { Stage, Trip, Waypoint } from "~/types";
+import { SosialMedia, Stage, Trip, Waypoint } from "~/types";
 
 export const meta: MetaFunction = () => {
   return [
@@ -18,41 +19,44 @@ export async function loader({ context }: LoaderFunctionArgs) {
   const tripsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/trips";
   const stagesUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/stages";
   const waypointsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/waypoints";
+  const sosialmediaUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/sosialmedia";
 
   const headers = {
     'Authorization': `Bearer ${context.cloudflare.env.API_TOKEN}`
   }
 
-  const tripsResponse = await fetch(tripsUrl, {
-    headers: headers,
-  });
-  const stagesResponse = await fetch(stagesUrl, {
-    headers: headers
-  });
-  const waypointsResponse = await fetch(waypointsUrl, {
-    headers: headers
-  });
+  const [tripsResponse, stagesResponse, waypointsResponse, sosialmediaResponse] = await Promise.all([
+    fetch(tripsUrl, { headers }),
+    fetch(stagesUrl, { headers }),
+    fetch(waypointsUrl, { headers }),
+    fetch(sosialmediaUrl, { headers }),
+  ]);
 
   if (!tripsResponse.ok) {
     throw new Response("Failed to load trip data", { status: tripsResponse.status });
   }
-
   if (!stagesResponse.ok) {
     throw new Response("Failed to load stage data", { status: stagesResponse.status });
   }
-
   if (!waypointsResponse.ok) {
     throw new Response("Failed to load waypoint data", { status: waypointsResponse.status });
   }
+  if (!sosialmediaResponse.ok) {
+    throw new Response("Failed to load sosialmedia data", { status: sosialmediaResponse.status });
+  }
 
-  const trips = await tripsResponse.json<Trip[]>();
-  const stages = await stagesResponse.json<Stage[]>();
-  const waypoints = await waypointsResponse.json<Waypoint[]>();
-  return { trips, stages, waypoints };
+  const [trips, stages, waypoints, sosialmedia] = await Promise.all([
+    tripsResponse.json<Trip[]>(),
+    stagesResponse.json<Stage[]>(),
+    waypointsResponse.json<Waypoint[]>(),
+    sosialmediaResponse.json<SosialMedia[]>(),
+  ]);
+  
+  return { trips, stages, waypoints, sosialmedia };
 }
 
 export default function Index() {
-  const { trips, stages, waypoints } = useLoaderData<typeof loader>();
+  const { trips, stages, waypoints, sosialmedia } = useLoaderData<typeof loader>();
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoOverlayRef = useRef<HTMLDivElement>(null);
 
@@ -97,6 +101,11 @@ export default function Index() {
           </Link>
         </div>
       </div>
+      <section>
+        {sosialmedia.map((post, idx) => (
+          <SosialMediaCard key={idx} title={post.title} description={post.description} image={post.image} url={post.url} />
+        ))}
+      </section>
       <MapProvider>
         <div className="h-screen w-full flex justify-center items-center px-4">
           <div
