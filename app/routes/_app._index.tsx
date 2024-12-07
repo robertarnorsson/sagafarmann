@@ -16,10 +16,10 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  const tripsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/trips";
-  const stagesUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/stages";
-  const waypointsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/waypoints";
-  const sosialmediaUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/sosialmedia";
+  const tripsUrl = "http://127.0.0.1:8787/trips";
+  const stagesUrl = "http://127.0.0.1:8787/stages";
+  const waypointsUrl = "http://127.0.0.1:8787/waypoints";
+  const sosialmediaUrl = "http://127.0.0.1:8787/sosialmedia";
 
   const headers = {
     'Authorization': `Bearer ${context.cloudflare.env.API_TOKEN}`
@@ -74,7 +74,7 @@ export default function Index() {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col">
       <div className="relative h-screen overflow-hidden">
         <video
           ref={videoRef}
@@ -87,39 +87,54 @@ export default function Index() {
           <source src="/assets/landing_page_video.webm" type="video/webm" />
           Your browser does not support the video tag.
         </video>
-        <div ref={videoOverlayRef} className="relative z-10 flex flex-col items-center justify-center h-full px-4 bg-background/20">
-          <h1 className="text-4xl md:text-6xl font-bold drop-shadow-md">
+        <div
+          ref={videoOverlayRef}
+          className="relative z-10 flex flex-col items-center justify-center h-full px-4 bg-background/20"
+        >
+          <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-md">
             Welcome to Saga Farmann
           </h1>
-          <p className="mt-4 text-lg md:text-xl drop-shadow-md">
+          <p className="mt-4 text-lg md:text-xl text-white drop-shadow-md">
             Embark on an unforgettable journey with us.
           </p>
-          <Link to='/join' prefetch="intent">
-            <Button className="mt-12 w-64 h-11">
-              Join Us
-            </Button>
+          <Link to="/join" prefetch="intent">
+            <Button className="mt-12 w-64 h-11">Join Us</Button>
           </Link>
         </div>
       </div>
-      <section>
-        {sosialmedia.map((post, idx) => (
-          <SosialMediaCard key={idx} title={post.title} description={post.description} image={post.image} url={post.url} />
-        ))}
-      </section>
-      <MapProvider>
-        <div className="h-screen w-full flex justify-center items-center px-4">
-          <div
-            className="flex flex-col md:flex-row rounded-lg shadow-lg overflow-hidden w-full h-3/4 max-w-6xl"
-          >
-            <div className="flex-grow h-2/3 md:h-full rounded-t-lg md:rounded-l-lg md:rounded-t-none overflow-hidden">
-              <TripsMap />
-            </div>
-            <div className="w-full h-1/3 md:h-full md:w-1/3">
-              <TripsMapSidebar trips={trips} stages={stages} waypoints={waypoints} />
-            </div>
+      <main className="flex flex-col items-center w-full">
+        <section className="container w-full py-12">
+          <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-center">
+            Social Media Highlights
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sosialmedia.map((post, idx) => (
+              <SosialMediaCard
+                key={idx}
+                title={post.title}
+                description={post.description}
+                image={post.image}
+                url={post.url}
+              />
+            ))}
           </div>
-        </div>
-      </MapProvider>
+        </section>
+        <section className="container w-full py-12">
+          <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-center">
+            See Where We Have Been and Where We Are Going
+          </h2>
+          <MapProvider>
+            <div className="flex flex-col md:flex-row items-center justify-center space-x-4 w-full h-full">
+              <div className="w-full h-64 md:h-[75vh] md:w-2/3 rounded-lg overflow-hidden">
+                <TripsMap />
+              </div>
+              <div className="w-full h-64 md:h-[75vh] md:w-1/3 mt-4 md:mt-0">
+                <TripsMapSidebar trips={trips} stages={stages} waypoints={waypoints} />
+              </div>
+            </div>
+          </MapProvider>
+        </section>
+      </main>
     </div>
   );
 }

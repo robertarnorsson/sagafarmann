@@ -119,7 +119,7 @@ export default function TripsMapSidebar({ trips, stages, waypoints }: TripsMapSi
     : [];
 
   return (
-    <div className="w-full md:w-64 lg:w-96 bg-secondary shadow-md rounded-b-lg md:rounded-r-lg md:rounded-b-none overflow-x-hidden relative flex flex-col h-full">
+    <div className="w-full md:w-64 lg:w-96 bg-secondary shadow-md rounded-lg overflow-x-hidden relative flex flex-col h-full">
       <div className="bg-secondary text-foreground flex items-center justify-between p-4 flex-none h-16">
         <div className="relative w-full flex items-center gap-2">
           <div
