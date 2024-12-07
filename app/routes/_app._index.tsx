@@ -1,3 +1,4 @@
+import { LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { Link, MetaFunction, useLoaderData } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 import TripsMapSidebar from "~/components/common/TripsMapSidebar";
@@ -13,14 +14,24 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader() {
-  const tripsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/trips";
-  const stagesUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/stages";
-  const waypointsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/waypoints";
+export async function loader({ context }: LoaderFunctionArgs) {
+  const tripsUrl = "http://127.0.0.1:8787/trips";
+  const stagesUrl = "http://127.0.0.1:8787/stages";
+  const waypointsUrl = "http://127.0.0.1:8787/waypoints";
 
-  const tripsResponse = await fetch(tripsUrl);
-  const stagesResponse = await fetch(stagesUrl);
-  const waypointsResponse = await fetch(waypointsUrl);
+  const headers = {
+    'Authorization': `Bearer ${context.cloudflare.env.API_TOKEN}`
+  }
+
+  const tripsResponse = await fetch(tripsUrl, {
+    headers: headers,
+  });
+  const stagesResponse = await fetch(stagesUrl, {
+    headers: headers
+  });
+  const waypointsResponse = await fetch(waypointsUrl, {
+    headers: headers
+  });
 
   if (!tripsResponse.ok) {
     throw new Response("Failed to load trip data", { status: tripsResponse.status });
