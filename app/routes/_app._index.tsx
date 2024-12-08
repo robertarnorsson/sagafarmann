@@ -2,6 +2,8 @@ import { LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { Link, MetaFunction, useLoaderData } from "@remix-run/react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import ExplorationGrid from "~/components/common/ExplorationGrid";
+import { FlipWords } from "~/components/common/FlipWords";
 import SosialMediaCard from "~/components/common/SosialMediaCard";
 import TripsMapSidebar from "~/components/common/TripsMapSidebar";
 import TripsMap from "~/components/map/TripsMap";
@@ -12,12 +14,12 @@ import { SosialMedia, Stage, Trip, Waypoint } from "~/types";
 export const meta: MetaFunction = () => {
   return [
     { title: "Saga Farmann" },
-    { name: "description", content: "Saga Farman follow the vikings" },
+    { name: "description", content: "Saga Farmann: Follow the Vikings" },
   ];
 };
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  const API_URL = context.cloudflare.env.API_URL
+  const API_URL = context.cloudflare.env.API_URL;
 
   const tripsUrl = `${API_URL}/trips`;
   const stagesUrl = `${API_URL}/stages`;
@@ -25,8 +27,8 @@ export async function loader({ context }: LoaderFunctionArgs) {
   const sosialmediaUrl = `${API_URL}/sosialmedia?count=3`;
 
   const headers = {
-    'Authorization': `Bearer ${context.cloudflare.env.API_TOKEN}`
-  }
+    Authorization: `Bearer ${context.cloudflare.env.API_TOKEN}`,
+  };
 
   const [tripsResponse, stagesResponse, waypointsResponse, sosialmediaResponse] = await Promise.all([
     fetch(tripsUrl, { headers }),
@@ -35,17 +37,8 @@ export async function loader({ context }: LoaderFunctionArgs) {
     fetch(sosialmediaUrl, { headers }),
   ]);
 
-  if (!tripsResponse.ok) {
-    throw new Response("Failed to load trip data", { status: tripsResponse.status });
-  }
-  if (!stagesResponse.ok) {
-    throw new Response("Failed to load stage data", { status: stagesResponse.status });
-  }
-  if (!waypointsResponse.ok) {
-    throw new Response("Failed to load waypoint data", { status: waypointsResponse.status });
-  }
-  if (!sosialmediaResponse.ok) {
-    throw new Response("Failed to load sosialmedia data", { status: sosialmediaResponse.status });
+  if (!tripsResponse.ok || !stagesResponse.ok || !waypointsResponse.ok || !sosialmediaResponse.ok) {
+    throw new Response("Failed to load data", { status: 500 });
   }
 
   const [trips, stages, waypoints, sosialmedia] = await Promise.all([
@@ -54,33 +47,36 @@ export async function loader({ context }: LoaderFunctionArgs) {
     waypointsResponse.json<Waypoint[]>(),
     sosialmediaResponse.json<SosialMedia[]>(),
   ]);
-  
+
   return { trips, stages, waypoints, sosialmedia };
 }
 
 export default function Index() {
   const { trips, stages, waypoints, sosialmedia } = useLoaderData<typeof loader>();
 
-  const paralaxRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
-    target: paralaxRef,
-    offset: ['start start', 'end start'],
+    target: containerRef,
+    offset: ["start start", "end start"],
   });
 
-  const videoY = useTransform(scrollYProgress, [0, 1], ['0%', '80%']);
-  const overlayY = useTransform(scrollYProgress, [0, 1], ['0%', '200%']);
+  const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "120%"]);
+  const overlayY = useTransform(scrollYProgress, [0, 1], ["0%", "140%"]);
+
+  const videoBlur = useTransform(scrollYProgress, [0, 1], ["blur(0px)", "blur(10px)"]);
+  const videoScale = useTransform(scrollYProgress, [0, 1], ["100%", "110%"]);
+  
+  const overlayScale = useTransform(scrollYProgress, [0, 1], ["100%", "70%"]);
+
+  const words = ["unforgettable", "amazing", "surreal", "memorable", "inspiring", "breathtaking"];
 
   return (
-    <div className="flex flex-col">
-      <div
-        ref={paralaxRef}
-        className="relative h-screen overflow-hidden"
-        aria-label="Parallax Background Section"
-      >
+    <div ref={containerRef} className="relative">
+      <div className="sticky top-0 h-screen overflow-hidden bg-background">
         <motion.div
           className="absolute inset-0 w-full h-full"
-          style={{ y: videoY }}
+          style={{ y: videoY, filter: videoBlur ,scale: videoScale }}
           aria-hidden="true"
         >
           <video
@@ -91,25 +87,34 @@ export default function Index() {
             className="w-full h-full object-cover"
             aria-label="Background Video"
           >
-            <source src="/assets/landing_page_video.webm" type="video/webm" />
+            <source src="/assets/videos/landing_page_video.webm" type="video/webm" />
             Your browser does not support the video tag.
           </video>
         </motion.div>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 bg-background/20">
-          <motion.div className="text-center" style={{ y: overlayY }}>
-            <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-md">
-              Welcome to Saga Farmann
-            </h1>
-            <p className="mt-4 text-lg md:text-xl text-white drop-shadow-md">
-              Embark on an unforgettable journey with us.
-            </p>
+
+        {/* Overlay Content */}
+        <div className="relative z-10 felx items-center justify-center h-full bg-black/30">
+          <motion.div className="flex flex-col items-center justify-center text-center h-full" style={{ y: overlayY, scale: overlayScale }} layout>
+            <motion.h1
+              layout
+              className="text-2xl md:text-5xl font-bold text-white inline-block transition-transform duration-500"
+            >
+              Experience the <FlipWords words={words} />
+              <br />
+              adventures with Saga Farmann.
+            </motion.h1>
             <Link to="/join" prefetch="intent" aria-label="Join Us">
               <Button className="mt-12 w-64 h-11">Join Us</Button>
             </Link>
           </motion.div>
         </div>
       </div>
-      <main className="flex flex-col items-center w-full">
+
+      {/* Main Content */}
+      <main className="flex flex-col items-center w-full mt-12 px-6 md:px-12">
+        <section className="container w-full py-12">
+          <ExplorationGrid />
+        </section>
         <section className="container w-full py-12">
           <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-center">
             Social Media Highlights
@@ -135,9 +140,9 @@ export default function Index() {
               <div className="w-full h-64 md:h-[75vh] md:w-2/3 rounded-lg overflow-hidden">
                 <TripsMap />
               </div>
-              <div className="h-64 md:h-[75vh]">
-                <TripsMapSidebar trips={trips} stages={stages} waypoints={waypoints} />
-              </div>
+              <div className="w-full h-1/3 md:h-[75vh] md:w-1/3">
+              <TripsMapSidebar trips={trips} stages={stages} waypoints={waypoints} />
+            </div>
             </div>
           </MapProvider>
         </section>

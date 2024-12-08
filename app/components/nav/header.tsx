@@ -1,15 +1,16 @@
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { Button } from "~/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Link } from "@remix-run/react";
-import { links } from "~/lib/constants/links";
+import { links } from "~/lib/links";
 
 export default function Header() {
   return (
     <header className="fixed left-0 right-0 top-0 h-14 bg-transparent flex justify-center items-center backdrop-blur-sm z-40">
       <div className="container px-4 lg:px-6 flex items-center">
         <Link className="flex items-center justify-center" to="/" prefetch="render">
-          <span className="ml-2 text-2xl font-bold font-archivo text-white">Saga Farmann</span>
+          <img src="/assets/images/logo/logo_single_256x256.png" alt="Saga Farmann logo" height={38} width={38} />
+          <span className="ml-2 text-2xl font-bold font-sans text-white">Saga Farmann</span>
         </Link>
         <nav className="hidden sm:flex ml-auto gap-4 sm:gap-6 items-center text-white">
           {links.map((link, idx) =>
@@ -36,7 +37,7 @@ export default function Header() {
               size="icon"
               className="shrink-0 ml-auto sm:hidden hover:bg-accent/30 hover:text-accent-foreground/30"
             >
-              <Menu className="h-5 w-5 text-white" />
+              <Menu strokeWidth={2} className="!h-5 !w-5 text-white" />
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
@@ -44,19 +45,20 @@ export default function Header() {
             side="right"
             closeButton={false}
             aria-describedby=""
-            className="z-50 bg-background/60 backdrop-blur-lg border-none"
+            className="z-50 bg-background/50 backdrop-blur-md border-none"
           >
             <nav className="grid gap-4 text-lg font-medium">
-              <SheetClose className="absolute right-4 top-4">
+              <SheetClose className="absolute left-0 top-1/2 -translate-y-1/2">
                 <div className="p-3 cursor-pointer">
-                  <X className="w-5 h-5 text-white" />
+                  <div className="h-12 w-1 rounded-full bg-foreground/30"></div>
                   <span className="sr-only">Close</span>
                 </div>
               </SheetClose>
               <div className="flex flex-row justify-between gap-2">
                 <SheetClose asChild>
                   <Link className="flex items-center" to="/" prefetch="render">
-                    <span className="text-3xl font-bold font-archivo text-white">Saga Farmann</span>
+                    <img src="/assets/images/logo/logo_single_256x256.png" alt="Saga Farmann logo" height={38} width={38} />
+                    <span className="text-2xl ml-2 font-bold font-archivo text-white">Saga Farmann</span>
                   </Link>
                 </SheetClose>
               </div>
