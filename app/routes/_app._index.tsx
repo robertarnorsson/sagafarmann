@@ -1,6 +1,7 @@
 import { LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { Link, MetaFunction, useLoaderData } from "@remix-run/react";
-import { useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import SosialMediaCard from "~/components/common/SosialMediaCard";
 import TripsMapSidebar from "~/components/common/TripsMapSidebar";
 import TripsMap from "~/components/map/TripsMap";
@@ -16,10 +17,12 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  const tripsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/trips";
-  const stagesUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/stages";
-  const waypointsUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/waypoints";
-  const sosialmediaUrl = "https://sagafarmann-api.patient-lab-9126.workers.dev/sosialmedia";
+  const API_URL = context.cloudflare.env.API_URL
+
+  const tripsUrl = `${API_URL}/trips`;
+  const stagesUrl = `${API_URL}/stages`;
+  const waypointsUrl = `${API_URL}/waypoints`;
+  const sosialmediaUrl = `${API_URL}/sosialmedia?count=3`;
 
   const headers = {
     'Authorization': `Bearer ${context.cloudflare.env.API_TOKEN}`
@@ -57,49 +60,53 @@ export async function loader({ context }: LoaderFunctionArgs) {
 
 export default function Index() {
   const { trips, stages, waypoints, sosialmedia } = useLoaderData<typeof loader>();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const videoOverlayRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (videoRef.current && videoOverlayRef.current) {
-        const scrollY = window.scrollY;
-        videoRef.current.style.transform = `translateY(${scrollY * 0.5}px)`;
-        videoOverlayRef.current.style.backgroundColor = `hsl(var(--background) / ${Math.min(0.2 + scrollY / window.screen.height, 1)})`;
-      }
-    };
+  const paralaxRef = useRef<HTMLDivElement>(null);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const { scrollYProgress } = useScroll({
+    target: paralaxRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const videoY = useTransform(scrollYProgress, [0, 1], ['0%', '80%']);
+  const overlayY = useTransform(scrollYProgress, [0, 1], ['0%', '200%']);
 
   return (
     <div className="flex flex-col">
-      <div className="relative h-screen overflow-hidden">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover"
+      <div
+        ref={paralaxRef}
+        className="relative h-screen overflow-hidden"
+        aria-label="Parallax Background Section"
+      >
+        <motion.div
+          className="absolute inset-0 w-full h-full"
+          style={{ y: videoY }}
+          aria-hidden="true"
         >
-          <source src="/assets/landing_page_video.webm" type="video/webm" />
-          Your browser does not support the video tag.
-        </video>
-        <div
-          ref={videoOverlayRef}
-          className="relative z-10 flex flex-col items-center justify-center h-full px-4 bg-background/20"
-        >
-          <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-md">
-            Welcome to Saga Farmann
-          </h1>
-          <p className="mt-4 text-lg md:text-xl text-white drop-shadow-md">
-            Embark on an unforgettable journey with us.
-          </p>
-          <Link to="/join" prefetch="intent">
-            <Button className="mt-12 w-64 h-11">Join Us</Button>
-          </Link>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+            aria-label="Background Video"
+          >
+            <source src="/assets/landing_page_video.webm" type="video/webm" />
+            Your browser does not support the video tag.
+          </video>
+        </motion.div>
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 bg-background/20">
+          <motion.div className="text-center" style={{ y: overlayY }}>
+            <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-md">
+              Welcome to Saga Farmann
+            </h1>
+            <p className="mt-4 text-lg md:text-xl text-white drop-shadow-md">
+              Embark on an unforgettable journey with us.
+            </p>
+            <Link to="/join" prefetch="intent" aria-label="Join Us">
+              <Button className="mt-12 w-64 h-11">Join Us</Button>
+            </Link>
+          </motion.div>
         </div>
       </div>
       <main className="flex flex-col items-center w-full">
@@ -108,9 +115,9 @@ export default function Index() {
             Social Media Highlights
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sosialmedia.map((post, idx) => (
+            {sosialmedia.map((post) => (
               <SosialMediaCard
-                key={idx}
+                key={post.id}
                 title={post.title}
                 description={post.description}
                 image={post.image}
@@ -124,11 +131,11 @@ export default function Index() {
             See Where We Have Been and Where We Are Going
           </h2>
           <MapProvider>
-            <div className="flex flex-col md:flex-row items-center justify-center space-x-4 w-full h-full">
+            <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 w-full h-full">
               <div className="w-full h-64 md:h-[75vh] md:w-2/3 rounded-lg overflow-hidden">
                 <TripsMap />
               </div>
-              <div className="w-full h-64 md:h-[75vh] md:w-1/3 mt-4 md:mt-0">
+              <div className="h-64 md:h-[75vh]">
                 <TripsMapSidebar trips={trips} stages={stages} waypoints={waypoints} />
               </div>
             </div>

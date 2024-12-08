@@ -3,7 +3,6 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration,
 } from "@remix-run/react";
 
 import "@fontsource-variable/inter";
@@ -19,7 +18,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <ScrollRestoration />
         <Scripts />
         <Links />
       </body>
