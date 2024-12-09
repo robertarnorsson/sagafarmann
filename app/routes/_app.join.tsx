@@ -12,6 +12,13 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 
@@ -23,8 +30,12 @@ export const meta: MetaFunction = () => {
 };
 
 const joinSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
+  lastName: z.string().min(2, { message: "Last name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
+  gender: z.enum(["Male", "Female", "Non-Binary", "Other"], {
+    errorMap: () => ({ message: "Please select a gender." }),
+  }),
   message: z.string().min(10, { message: "Message must be at least 10 characters." }),
 });
 
@@ -32,8 +43,10 @@ export default function JoinUs() {
   const joinForm = useForm<z.infer<typeof joinSchema>>({
     resolver: zodResolver(joinSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
+      gender: undefined,
       message: "",
     },
   });
@@ -43,7 +56,7 @@ export default function JoinUs() {
   }
 
   return (
-    <div className="reltive flex items-center justify-center min-h-screen p-4">
+    <div className="relative flex items-center justify-center min-h-screen p-4">
       <div className="relative w-full max-w-lg">
         <Card>
           <CardTitle>
@@ -55,22 +68,37 @@ export default function JoinUs() {
                 onSubmit={joinForm.handleSubmit(onSubmit)}
                 className="space-y-4"
               >
-                <FormField
-                  control={joinForm.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Your Name"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* First Name and Last Name */}
+                <div className="flex space-x-4">
+                  <FormField
+                    control={joinForm.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="First Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={joinForm.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Last Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Email */}
                 <FormField
                   control={joinForm.control}
                   name="email"
@@ -78,16 +106,42 @@ export default function JoinUs() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="Your Email"
-                          {...field}
-                        />
+                        <Input type="email" placeholder="Your Email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/* Gender Select */}
+                <FormField
+                  control={joinForm.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gender</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Gender" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent >
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                          <SelectItem value="Non-Binary">Non-Binary</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Message */}
                 <FormField
                   control={joinForm.control}
                   name="message"
@@ -105,10 +159,9 @@ export default function JoinUs() {
                     </FormItem>
                   )}
                 />
-                <Button
-                  type="submit"
-                  className="w-full h-11"
-                >
+
+                {/* Submit Button */}
+                <Button type="submit" className="w-full h-11">
                   Join Us
                 </Button>
               </form>

@@ -9,13 +9,12 @@ interface SosialMediaCardProps {
   url: string;
 }
 
-export default function SosialMediaCard({
+export function SosialMediaCard({
   title,
   description,
   image,
   url,
 }: SosialMediaCardProps) {
-  // Determine the social media icon based on the URL
   const getSocialMediaIcon = (url: string) => {
     if (url.includes("facebook.com")) return SiFacebook;
     if (url.includes("instagram.com")) return SiInstagram;
@@ -44,7 +43,6 @@ export default function SosialMediaCard({
             <p className="text-sm text-pretty text-card-foreground max-h-16 overflow-hidden">
               {description}
             </p>
-            {/* Fade overlay */}
             <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-card to-transparent"></div>
           </div>
         </div>
@@ -52,6 +50,38 @@ export default function SosialMediaCard({
     </Link>
   );
 }
+
+
+export function SosialMediaCardSkeleton() {
+  return (
+    <div className="block max-w-sm mx-auto">
+      <div className="rounded-lg shadow-md bg-card overflow-hidden animate-pulse">
+        {/* Image Placeholder */}
+        <div className="w-full h-48 bg-muted"></div>
+        <div className="p-4 py-3 space-y-3 relative">
+          {/* Action Buttons Placeholder */}
+          <div className="flex justify-between items-center space-x-3">
+            <div className="flex items-center space-x-3">
+              {[...Array(3)].map((_, index) => (
+                <div
+                  key={index}
+                  className="w-5 h-5 bg-muted-foreground rounded-full"
+                ></div>
+              ))}
+            </div>
+            <div className="w-4 h-4 bg-muted-foreground rounded-full"></div>
+          </div>
+          {/* Description Placeholder */}
+          <div className="space-y-2">
+            <div className="h-4 bg-muted-foreground rounded"></div>
+            <div className="h-4 bg-muted-foreground rounded w-3/4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function ActionButton({ icon: Icon }: { icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }) {
   return (

@@ -1,10 +1,10 @@
 import { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { Link, MetaFunction, useLoaderData } from "@remix-run/react";
+import { Await, Link, MetaFunction, useLoaderData } from "@remix-run/react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import ExplorationGrid from "~/components/common/ExplorationGrid";
 import { FlipWords } from "~/components/common/FlipWords";
-import SosialMediaCard from "~/components/common/SosialMediaCard";
+import { SosialMediaCard, SosialMediaCardSkeleton } from "~/components/common/SosialMediaCard";
 import TripsMapSidebar from "~/components/common/TripsMapSidebar";
 import TripsMap from "~/components/map/TripsMap";
 import { Button } from "~/components/ui/button";
@@ -21,38 +21,20 @@ export const meta: MetaFunction = () => {
 export async function loader({ context }: LoaderFunctionArgs) {
   const API_URL = context.cloudflare.env.API_URL;
 
-  const tripsUrl = `${API_URL}/trips`;
-  const stagesUrl = `${API_URL}/stages`;
-  const waypointsUrl = `${API_URL}/waypoints`;
-  const sosialmediaUrl = `${API_URL}/sosialmedia?count=3`;
-
   const headers = {
     Authorization: `Bearer ${context.cloudflare.env.API_TOKEN}`,
   };
 
-  const [tripsResponse, stagesResponse, waypointsResponse, sosialmediaResponse] = await Promise.all([
-    fetch(tripsUrl, { headers }),
-    fetch(stagesUrl, { headers }),
-    fetch(waypointsUrl, { headers }),
-    fetch(sosialmediaUrl, { headers }),
-  ]);
+  const tripsPromise = fetch(`${API_URL}/trips`, { headers }).then((res) => res.json<Trip[]>());
+  const stagesPromise = fetch(`${API_URL}/stages`, { headers }).then((res) => res.json<Stage[]>());
+  const waypointsPromise = fetch(`${API_URL}/waypoints`, { headers }).then((res) => res.json<Waypoint[]>());
+  const sosialmediaPromise = fetch(`${API_URL}/sosialmedia?count=3`, { headers }).then((res) => res.json<SosialMedia[]>());
 
-  if (!tripsResponse.ok || !stagesResponse.ok || !waypointsResponse.ok || !sosialmediaResponse.ok) {
-    throw new Response("Failed to load data", { status: 500 });
-  }
-
-  const [trips, stages, waypoints, sosialmedia] = await Promise.all([
-    tripsResponse.json<Trip[]>(),
-    stagesResponse.json<Stage[]>(),
-    waypointsResponse.json<Waypoint[]>(),
-    sosialmediaResponse.json<SosialMedia[]>(),
-  ]);
-
-  return { trips, stages, waypoints, sosialmedia };
+  return { tripsPromise, stagesPromise, waypointsPromise, sosialmediaPromise }
 }
 
 export default function Index() {
-  const { trips, stages, waypoints, sosialmedia } = useLoaderData<typeof loader>();
+  const { tripsPromise, stagesPromise, waypointsPromise, sosialmediaPromise } = useLoaderData<typeof loader>();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -104,7 +86,7 @@ export default function Index() {
               adventures with Saga Farmann.
             </motion.h1>
             <Link to="/join" prefetch="intent" aria-label="Join Us">
-              <Button className="mt-12 w-64 h-11">Join Us</Button>
+              <Button className="text-lg font-semibold mt-12 w-64 h-11">Join Us</Button>
             </Link>
           </motion.div>
         </div>
@@ -120,15 +102,19 @@ export default function Index() {
             Social Media Highlights
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sosialmedia.map((post) => (
-              <SosialMediaCard
-                key={post.id}
-                title={post.title}
-                description={post.description}
-                image={post.image}
-                url={post.url}
-              />
-            ))}
+            <Suspense fallback={[...Array(3)].map((_, idx) => (<SosialMediaCardSkeleton key={idx} />))}>
+              <Await resolve={sosialmediaPromise}>
+                {(sosialmedia) => sosialmedia.map((post) => (
+                    <SosialMediaCard
+                      key={post.id}
+                      title={post.title}
+                      description={post.description}
+                      image={post.image}
+                      url={post.url}
+                    />
+                  ))}
+              </Await>
+            </Suspense>
           </div>
         </section>
         <section className="container w-full py-12">
@@ -141,7 +127,11 @@ export default function Index() {
                 <TripsMap />
               </div>
               <div className="w-full h-1/3 md:h-[75vh] md:w-1/3">
-              <TripsMapSidebar trips={trips} stages={stages} waypoints={waypoints} />
+              <Suspense>
+                <Await resolve={Promise.all([tripsPromise, stagesPromise, waypointsPromise])}>
+                  {([trips, stages, waypoints]) => <TripsMapSidebar trips={trips} stages={stages} waypoints={waypoints} />}
+                </Await>
+              </Suspense>
             </div>
             </div>
           </MapProvider>
