@@ -43,22 +43,21 @@ export default function Index() {
     offset: ["start start", "end start"],
   });
 
-  const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "120%"]);
-  const overlayY = useTransform(scrollYProgress, [0, 1], ["0%", "140%"]);
-
-  const videoBlur = useTransform(scrollYProgress, [0, 1], ["blur(0px)", "blur(10px)"]);
+  const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const videoScale = useTransform(scrollYProgress, [0, 1], ["100%", "110%"]);
-  
+  const videoBlur = useTransform(scrollYProgress, [0, 1], ["blur(0px)", "blur(10px)"]);
+
+  const overlayY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
   const overlayScale = useTransform(scrollYProgress, [0, 1], ["100%", "70%"]);
 
   const words = ["unforgettable", "amazing", "surreal", "memorable", "inspiring", "breathtaking"];
 
   return (
-    <div ref={containerRef} className="relative">
-      <div className="sticky top-0 h-screen overflow-hidden bg-background">
+    <div className="relative">
+      <div ref={containerRef} className="sticky top-0 h-screen overflow-hidden bg-background">
         <motion.div
           className="absolute inset-0 w-full h-full"
-          style={{ y: videoY, filter: videoBlur ,scale: videoScale }}
+          style={{ y: videoY, filter: videoBlur, scale: videoScale }}
           aria-hidden="true"
         >
           <video
@@ -79,7 +78,7 @@ export default function Index() {
           <motion.div className="flex flex-col items-center justify-center text-center h-full" style={{ y: overlayY, scale: overlayScale }} layout>
             <motion.h1
               layout
-              className="text-2xl md:text-5xl font-bold text-white inline-block transition-transform duration-500"
+              className="text-2xl md:text-5xl font-bold text-white inline-block"
             >
               Experience the <FlipWords words={words} />
               <br />
