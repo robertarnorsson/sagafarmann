@@ -11,6 +11,11 @@ export const meta: MetaFunction = () => {
 // Sample roles data
 const roles = [
   {
+    name: "Saga Lundenwic 2025 - General information",
+    description: "Background information about the project, voyage details, what to expect, how to apply and more.",
+    downloadUrl: "/assets/download/pdf/Saga Lundenwic 2025 - Stages, Info.pdf",
+  },
+  {
     name: "Captain",
     description: "The Captain has the overall responsibility for the ship throughout the stage and is also responsible for the crew when the ship is on the move (sailing, motoring etc.)",
     downloadUrl: "/assets/download/pdf/Captain - Role description.pdf",
@@ -33,7 +38,7 @@ const roles = [
   {
     name: "Stage Responsible - Home based",
     description: "A home-based Stage Responsible (SR-H) is needed when a voyage is in progress abroad. The SR-H will coordinate actions relevant to do in Norway from a home office - all in close dialogue with the Stage Responsible based on the ship (SR-S)",
-    downloadUrl: "/assets/download/pdf/Saga Lundenwic 2025 - Stages, Info.pdf",
+    downloadUrl: "/assets/download/pdf/Stage Responsible HOME - Role description.pdf",
   },
   {
     name: "Stage Responsible - On board",
@@ -45,12 +50,10 @@ const roles = [
 export default function Index() {
   return (
     <div className="container min-h-screen mx-auto py-12 px-6 mt-12">
-      <div className="py-8 mb-4">
-        <h1 className="text-3xl font-bold">Saga Lundenwic 2025 - General information</h1>
-        <p className="text-lg text-muted-foreground">Background information about the project, voyage details, what to expect, how to apply and more.</p>
+      <div className="py-8 mb-4 text-center">
+        <h1 className="text-3xl font-bold">Saga Farmann Information</h1>
       </div>
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold">Role Descriptions</h1>
         {roles.map((role, index) => (
           <div key={index} className="bg-card shadow-md rounded-lg p-6 flex flex-col justify-between space-y-4">
             <div className="flex flex-col space-y-2">
