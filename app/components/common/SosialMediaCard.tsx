@@ -25,22 +25,22 @@ export function SosialMediaCard({
   const Icon = getSocialMediaIcon(url);
 
   return (
-    <Link to={url} target="_blank" rel="noreferrer noopener" className="block max-w-sm mx-auto">
+    <Link to={url} target="_blank" rel="noreferrer noopener" className="block">
       <div className="rounded-lg shadow-md bg-card hover:shadow-lg transition-shadow duration-300 overflow-hidden">
         <img src={image} alt={title} className="w-full h-48 object-cover" />
-        <div className="p-4 py-3 space-y-3 relative">
-          <div className="flex justify-between items-center space-x-3">
-            <div className="flex items-center space-x-3">
+        <div className="p-4 py-3 space-y-3">
+          <div className="flex justify-between items-center">
+            <div className="flex space-x-3">
               <ActionButton icon={Heart} />
               <ActionButton icon={MessageCircle} />
               <ActionButton icon={Send} />
             </div>
-            <div className="flex items-center space-x-3">
+            <div>
               {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
             </div>
           </div>
           <div className="relative">
-            <p className="text-sm text-pretty text-card-foreground max-h-16 overflow-hidden">
+            <p className="text-sm text-card-foreground max-h-16 overflow-hidden">
               {description}
             </p>
             <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-card to-transparent"></div>
@@ -52,20 +52,19 @@ export function SosialMediaCard({
 }
 
 
+
 export function SosialMediaCardSkeleton() {
   return (
-    <div className="block max-w-sm mx-auto">
+    <div className="block">
       <div className="rounded-lg shadow-md bg-card overflow-hidden animate-pulse">
-        {/* Image Placeholder */}
         <div className="w-full h-48 bg-muted"></div>
-        <div className="p-4 py-3 space-y-3 relative">
-          {/* Action Buttons Placeholder */}
-          <div className="flex justify-between items-center space-x-3">
-            <div className="flex items-center space-x-3">
+        <div className="p-4 py-3 space-y-3">
+          <div className="flex justify-between items-center">
+            <div className="flex space-x-3">
               {[...Array(3)].map((_, index) => (
                 <div
                   key={index}
-                  className="w-5 h-5 bg-muted-foreground rounded-full"
+                  className="w-4 h-4 bg-muted-foreground rounded-full"
                 ></div>
               ))}
             </div>
@@ -73,14 +72,15 @@ export function SosialMediaCardSkeleton() {
           </div>
           {/* Description Placeholder */}
           <div className="space-y-2">
-            <div className="h-4 bg-muted-foreground rounded"></div>
-            <div className="h-4 bg-muted-foreground rounded w-3/4"></div>
+            <div className="h-[28px] bg-muted-foreground rounded w-full"></div>
+            <div className="h-[28px] bg-muted-foreground rounded w-full"></div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 
 function ActionButton({ icon: Icon }: { icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }) {

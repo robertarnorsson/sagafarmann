@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import 'ol/ol.css';
 import { Map, View } from 'ol';
 import { XYZ } from 'ol/source';
@@ -8,6 +8,8 @@ import { useMap } from '~/context/MapContext';
 const TripsMap: React.FC = () => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<Map | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const { map } = useMap();
 
   useEffect(() => {
@@ -29,8 +31,8 @@ const TripsMap: React.FC = () => {
         ],
         attributions: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       }),
-      cacheSize: 128,
-      preload: 128
+      cacheSize: 512,
+      preload: 4
     });
 
     mapInstance.current = new Map({
@@ -40,6 +42,8 @@ const TripsMap: React.FC = () => {
       maxTilesLoading: 64,
       controls: [],
     });
+
+    setIsLoading(false);
 
     mapInstance.current.getInteractions().forEach((i) => {i.setActive(false);});
 
@@ -52,14 +56,18 @@ const TripsMap: React.FC = () => {
   }, [map]);
 
   return (
-    <div
-      ref={mapRef}
-      style={{
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-      }}
-    />
+    <div className="relative w-full h-full">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-secondary animate-pulse z-10">
+          <div className="text-center">
+            <p className="text-foreground">Loading map...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Map Container */}
+      <div ref={mapRef} className="w-full h-full" />
+    </div>
   );
 };
 

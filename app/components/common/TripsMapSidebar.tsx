@@ -221,3 +221,21 @@ export default function TripsMapSidebar({ trips, stages, waypoints }: TripsMapSi
     </div>
   );
 }
+
+export function TripsMapSidebarSkeleton() {
+  return (
+    <div className="flex flex-col w-full md:w-64 lg:w-96 h-full bg-secondary shadow-md rounded-lg animate-pulse">
+      <div className="flex items-center justify-start p-4 pl-6 h-16">
+        <div className="w-32 h-6 bg-muted-foreground rounded"></div>
+      </div>
+      <Separator className="bg-muted-foreground/50" />
+      <div className="flex-1 p-4 space-y-2">
+        {[...Array(5)].map((_, idx) => (
+          <div key={idx} className="flex justify-center items-center w-full h-9 px-4 py-2 bg-muted-foreground/20 rounded">
+            <div className="w-full h-4 bg-muted-foreground rounded"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
