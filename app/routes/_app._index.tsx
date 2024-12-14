@@ -64,14 +64,14 @@ export default function Index() {
         <div className="relative z-10 felx items-center justify-center h-full bg-black/30">
           <div className="flex flex-col items-center justify-center text-center h-full">
             <h1
-              className="text-2xl md:text-5xl font-bold text-white inline-block"
+              className="text-2xl md:text-5xl font-bold text-foreground inline-block"
             >
               Experience the <FlipWords words={words} />
               <br />
               adventures with Saga Farmann.
             </h1>
-            <Link to="/join" prefetch="intent" aria-label="Join Us">
-              <Button className="text-lg font-semibold mt-12 w-64 h-11">Join Us</Button>
+            <Link to="/join" prefetch="intent" aria-label="Join Us" className="mt-12">
+              <Button className="text-base font-base uppercase w-72 h-12 hover:bg-primary">Join Us</Button>
             </Link>
           </div>
         </div>
@@ -138,25 +138,43 @@ export default function Index() {
             />
           </div>
         </section> */}
-        <section className="container mx-auto w-full md:w-2/3 py-12">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <img
-              src="/assets/images/donate.jpg"
-              alt="Donate to Saga Farmann"
-              className="h-auto w-full md:w-56 rounded-lg object-cover"
-            />
-            <div className="flex flex-col items-center text-center md:items-start md:text-left space-y-4">
-              <h2 className="text-xl font-bold">Donate</h2>
-              <h3 className="text-lg font-semibold">Donate to keep the voyage going</h3>
-              <p className="text-sm text-muted-foreground">
-                <strong>Your support matters</strong>
-                <br />
-                If you want to support the voyage, please feel free to provide us with a donation.
-                All donations will be used solely to keep the ship moving and the crew fed.
-              </p>
-              <Link to="https://www.paypal.com/donate/?hosted_button_id=2EAXYY2GZBJMY" target="_blank" rel="noopener noreferrer" prefetch="intent" aria-label="Donate to Saga Farmann">
-                <Button className="text-lg font-semibold mt-12 w-64 h-11">Donate</Button>
-              </Link>
+        <section className="relative container w-full py-12">
+          <div className="relative rounded-lg overflow-hidden">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url('/assets/images/donate.jpg')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                transform: "scaleX(-1)",
+                filter: "blur(25px) brightness(0.2)",
+              }}
+            ></div>
+            <div className="relative z-10 px-6 md:px-12 flex items-center justify-center">
+              <div className="flex flex-col items-center text-center p-6 md:p-12">
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground">Donate</h2>
+                <h3 className="text-lg md:text-xl font-semibold text-foreground mt-4">
+                  Donate to keep the voyage going
+                </h3>
+                <p className="text-sm md:text-base md:w-2/3 text-foreground leading-relaxed mt-4">
+                  <strong>Your support matters</strong>
+                  <br />
+                  If you want to support the voyage, please feel free to provide us with a donation.
+                  All donations will be used solely to keep the ship moving and the crew fed.
+                </p>
+                <Link
+                  to="https://www.paypal.com/donate/?hosted_button_id=2EAXYY2GZBJMY"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  prefetch="intent"
+                  aria-label="Donate to Saga Farmann"
+                  className="mt-8"
+                >
+                  <Button className="text-lg font-semibold w-48 h-12">
+                    Donate
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>

@@ -45,30 +45,30 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex justify-center gap-4 my-8">
-          <a
-            href="https://facebook.com"
+          <Link
+            to="https://www.facebook.com/VikingskipetSagaFarmann"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-foreground transition duration-300"
           >
             <SiFacebook />
-          </a>
-          <a
-            href="https://instagram.com"
+          </Link>
+          <Link
+            to="https://www.instagram.com/original_vikings_of_norway/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-foreground transition duration-300"
           >
             <SiInstagram />
-          </a>
-          <a
-            href="https://youtube.com"
+          </Link>
+          <Link
+            to="https://www.youtube.com/channel/UCaPUAvRBw0i5ET79TMh2_MQ"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-foreground transition duration-300"
           >
             <SiYoutube />
-          </a>
+          </Link>
         </div>
         <div className="text-center mt-8">
           <p className="text-xs text-muted-foreground">

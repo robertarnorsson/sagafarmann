@@ -3,6 +3,7 @@ import { Button } from "~/components/ui/button";
 import { Menu } from "lucide-react";
 import { Link } from "@remix-run/react";
 import { links } from "~/lib/links";
+import { SiFacebook, SiInstagram, SiYoutube } from "@icons-pack/react-simple-icons";
 
 export default function Header() {
   return (
@@ -82,6 +83,32 @@ export default function Header() {
                     </SheetClose>
                   )
                 )}
+                <div className="flex flex-row items-center justify-around w-full group">
+                  <Link
+                    to="https://www.facebook.com/VikingskipetSagaFarmann"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-foreground bg-primary rounded-md p-2"
+                  >
+                    <SiFacebook className="w-6 h-6" />
+                  </Link>
+                  <Link
+                    to="https://www.instagram.com/original_vikings_of_norway/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-foreground bg-primary rounded-md p-2"
+                  > 
+                    <SiInstagram className="w-6 h-6" />
+                  </Link>
+                  <Link
+                    to="https://www.youtube.com/channel/UCaPUAvRBw0i5ET79TMh2_MQ"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-foreground bg-primary rounded-md p-2"
+                  >
+                    <SiYoutube className="w-6 h-6" />
+                  </Link>
+                </div>
               </div>
             </nav>
           </SheetContent>

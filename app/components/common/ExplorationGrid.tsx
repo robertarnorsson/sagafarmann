@@ -15,7 +15,9 @@ export default function ExplorationGrid() {
       id: 2,
       type: "text",
       title: "Viking Voyages",
-      description: "The vikings travelled the world and established relationships and trade routes, got inspired by foreign cultures and left us all with some interesting stories to tell.",
+      description:
+        "The vikings travelled the world and established relationships and trade routes, got inspired by foreign cultures and left us all with some interesting stories to tell.",
+      background: "/assets/images/expedition_1.jpg",
       mobile: true,
     },
     {
@@ -29,7 +31,9 @@ export default function ExplorationGrid() {
       id: 4,
       type: "text",
       title: "Follow the vikings",
-      description: "We would like to revisit sites and cities to remind us all about these relationships that resides from centuries ago.",
+      description:
+        "We would like to revisit sites and cities to remind us all about these relationships that resides from centuries ago.",
+      background: "/assets/images/expedition_2.jpg",
       mobile: true,
     },
     {
@@ -43,7 +47,9 @@ export default function ExplorationGrid() {
       id: 6,
       type: "text",
       title: "Be together",
-      description: "These are times for friendship, cross-cultural understanding and sharing of common history.",
+      description:
+        "These are times for friendship, cross-cultural understanding and sharing of common history.",
+      background: "/assets/images/expedition_3.jpg",
       mobile: false,
     },
   ];
@@ -67,12 +73,24 @@ export default function ExplorationGrid() {
         ) : (
           <div
             key={item.id}
-            className="flex flex-col justify-center items-center rounded-lg bg-card p-6 text-center shadow-md h-60 sm:h-72 md:h-80"
+            className="relative flex flex-col justify-center items-center rounded-lg overflow-hidden h-60 sm:h-72 md:h-80"
           >
-            <h2 className="text-lg sm:text-xl font-bold mb-2">{item.title}</h2>
-            <p className="text-sm sm:text-base text-card-foreground">
-              {item.description}
-            </p>
+            {/* Background Image */}
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${item.background})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                transform: "scaleX(-1)",
+                filter: "blur(25px) brightness(0.2)",
+              }}
+            ></div>
+
+            {/* Text Content */}
+            <div className="relative z-10 text-white p-4">
+              <p className="text-base sm:text-2xl text-center text-pretty">{item.description}</p>
+            </div>
           </div>
         )
       )}
