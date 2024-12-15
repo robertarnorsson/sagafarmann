@@ -248,7 +248,7 @@ export default function JoinUs() {
                   )}
                 />
 
-                {isClient && <Turnstile sitekey={siteKey} size="invisible" />}
+                {isClient && <Turnstile sitekey={siteKey} size="normal" theme="dark" appearance="always" fixedSize />}
                 
                 {message && (
                   <div className="flex flex-row items-center gap-2 border border-destructive p-2 rounded-sm">
