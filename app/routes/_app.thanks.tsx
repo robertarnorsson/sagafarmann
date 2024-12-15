@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
 
 export default function Thanks() {
   return (
-    <div className="h-full flex justify-center items-center">
+    <div className="h-screen flex justify-center items-center">
       <span>Thanks</span>
     </div>
   )

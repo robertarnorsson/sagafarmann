@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect, type ActionFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
+import { redirect, type LoaderFunctionArgs, type ActionFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
 import { useForm } from "react-hook-form";
+import Turnstile from 'react-turnstile';
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -21,6 +22,9 @@ import {
 } from "~/components/ui/select";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
+import { useEffect, useState } from "react";
+import { useActionData, useLoaderData } from "@remix-run/react";
+import { TriangleAlert } from "lucide-react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -29,6 +33,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export const handle = { hydrate: true };
 
 const joinSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
@@ -40,14 +45,42 @@ const joinSchema = z.object({
   message: z.string().min(10, { message: "Message must be at least 10 characters." }),
 });
 
-export const action = async (/* { request, context }: ActionFunctionArgs */) => {
+interface Turnstile {
+  success: boolean;
+}
+
+export const loader = async ({ context }: LoaderFunctionArgs) => {
+  return { siteKey: context.cloudflare.env.TURNSTILE_SITE_KEY}
+}
+
+export const action = async ({ request, context }: ActionFunctionArgs) => {
   try {
-    /* const formData = await request.formData(); */
-    /* const values = joinSchema.parse(Object.fromEntries(formData)); */
+    const formData = await request.formData();
+    const values = joinSchema.parse(Object.fromEntries(formData));
 
-    // Need capcha before sending to database
+    const token = formData.get("cf-turnstile-response");
 
-    /* const apiResponse = await fetch(`${context.cloudflare.env.API_URL}/join`, {
+    if (!token) {
+      return { message: "Captcha token is missing", status: 400 }
+    }
+
+    const turnstileFormData = new FormData();
+    turnstileFormData.append("secret", context.cloudflare.env.TURNSTILE_TOKEN);
+    turnstileFormData.append("response", token);
+
+    const turnstileRespone = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body: turnstileFormData
+    })
+
+    const outcome = await turnstileRespone.json<Turnstile>();
+
+    if (!outcome.success) {
+      console.log("Captcha failed")
+      return { message: "Captcha verification failed, please try again.",  status: 400 }
+    }
+
+    const apiResponse = await fetch(`${context.cloudflare.env.API_URL}/join`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,18 +90,28 @@ export const action = async (/* { request, context }: ActionFunctionArgs */) => 
     });
 
     if (!apiResponse.ok) {
-      const errorData = await apiResponse.json();
-      return [{ error: "Failed to submit form", details: errorData }, { status: 400 }];
-    } */
+      return { message: "Failed to submit form", status: 400 };
+    }
 
     return redirect('/thanks');
   } catch (error) {
     console.error(error);
-    return [{ error: "An unexpected error occurred" }, { status: 500 }];
+    return { message: "An unexpected error occurred", status: 500 };
   }
 };
 
 export default function JoinUs() {
+  const { siteKey } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+
+  const message = actionData?.message
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const joinForm = useForm<z.infer<typeof joinSchema>>({
     resolver: zodResolver(joinSchema),
     defaultValues: {
@@ -204,6 +247,15 @@ export default function JoinUs() {
                     </FormItem>
                   )}
                 />
+
+                {isClient && <Turnstile sitekey={siteKey} size="invisible" />}
+                
+                {message && (
+                  <div className="flex flex-row items-center gap-2 border border-destructive p-2 rounded-sm">
+                    <TriangleAlert strokeWidth="2" className="w-4 h-4 text-destructive" />
+                    <span className="text-sm text-destructive text-left">{message}</span>
+                  </div>
+                )}
 
                 <Button type="submit" className="w-full h-11">
                   Join Us

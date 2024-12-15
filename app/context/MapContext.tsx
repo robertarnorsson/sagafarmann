@@ -51,7 +51,6 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const vectorSource = new VectorSource();
     if (waypoints.length === 1) {
-      // Create a Point feature if there's only one waypoint
       const pointFeature = new Feature({
         geometry: new Point(waypoints[0]),
       });
@@ -59,7 +58,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const pointStyle = new Style({
         image: new CircleStyle({
           radius: 6,
-          fill: new Fill({ color: '#FF0000' }), // Red point color
+          fill: new Fill({ color: '#FF0000' }),
           stroke: new Stroke({ color: '#FFFFFF', width: 2 }),
         }),
       });
@@ -67,7 +66,6 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       pointFeature.setStyle(pointStyle);
       vectorSource.addFeature(pointFeature);
     } else if (waypoints.length > 1) {
-      // Create a LineString feature for multiple waypoints
       const lineString = new LineString(waypoints);
 
       const lineFeature = new Feature({
@@ -76,7 +74,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       const lineStyle = new Style({
         stroke: new Stroke({
-          color: '#FF0000', // Red line color
+          color: '#FF0000',
           width: 2,
         }),
       });

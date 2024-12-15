@@ -2,5 +2,7 @@
 
 interface Env {
 	API_URL: "https://sagafarmann-api.patient-lab-9126.workers.dev";
+	TURNSTILE_SITE_KEY: "0x4AAAAAAA2OYQhcu3voq9Rz";
 	API_TOKEN: string;
+	TURNSTILE_TOKEN: string;
 }
