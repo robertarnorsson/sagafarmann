@@ -134,7 +134,7 @@ export default function JoinUs() {
   }
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen p-4">
+    <div className="relative flex items-center justify-center min-h-screen p-4 mt-12">
       <div className="relative w-full max-w-lg">
         <Card>
           <CardHeader>

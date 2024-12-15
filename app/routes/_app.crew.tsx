@@ -16,7 +16,7 @@ const information = [
   },
   {
     name: "Packing List",
-    description: "Background information about the project, voyage details, what to expect, how to apply and more.",
+    description: "To make your stay on board safe and comfortable there are some items that you must and should bring along, and some you should not include in your baggage.",
     downloadUrl: "/assets/download/pdf/Packing-List.pdf",
   }
 ]

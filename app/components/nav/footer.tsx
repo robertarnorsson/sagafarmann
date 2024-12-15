@@ -1,29 +1,42 @@
 import { SiFacebook, SiInstagram, SiYoutube } from "@icons-pack/react-simple-icons";
 import { Link } from "@remix-run/react";
 import { Mail, MapPin } from "lucide-react";
+import { Button } from "../ui/button";
 
 export default function Footer() {
   return (
     <footer className="bg-secondary text-foreground border-t border-border py-8">
       <div className="container px-4 lg:px-6 mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-          <div className="flex-1">
+          <div className="flex flex-col flex-1">
             <h2 className="text-2xl font-bold mb-2">Saga Farmann</h2>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted-foreground">
               Embark on an unforgettable journey with Saga Farmann. Explore the world, discover new horizons, and make memories that last a lifetime.
             </p>
+            <Link
+              to="https://www.paypal.com/donate/?hosted_button_id=2EAXYY2GZBJMY"
+              target="_blank"
+              rel="noopener noreferrer"
+              prefetch="intent"
+              aria-label="Donate to Saga Farmann"
+              className="mt-4"
+            >
+              <Button className="text-lg font-normal w-32 h-9">
+                Donate
+              </Button>
+            </Link>
           </div>
           <div className="flex-1 flex flex-col items-start">
             <h3 className="text-lg font-semibold mb-2">Links</h3>
             <nav className="flex flex-col space-y-2">
-              <Link to="/tours" className="text-sm hover:underline">
-                Tours
-              </Link>
               <Link to="/sponsors" className="text-sm hover:underline">
                 Sponsors
               </Link>
               <Link to="/about" className="text-sm hover:underline">
                 About Us
+              </Link>
+              <Link to="/crew" className="text-sm hover:underline">
+                Info
               </Link>
               <Link to="/join" className="text-sm hover:underline">
                 Join Us

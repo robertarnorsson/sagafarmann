@@ -25,17 +25,36 @@ export default function TripsMapSidebar({ trips, stages, waypoints }: TripsMapSi
     removeWaypoints();
 
     if (page === "trips") {
-      // Show all waypoints for all stages in all trips
-      const allWaypoints = waypoints.map((waypoint) =>
-        fromLonLat([waypoint.longitude, waypoint.latitude])
-      );
-
-      if (allWaypoints.length === 1) {
-        addWaypoints(allWaypoints);
-        map.current?.getView().animate({ center: allWaypoints[0], zoom: 10, duration: 500 });
-      } else if (allWaypoints.length > 1) {
-        addWaypoints(allWaypoints);
-
+      // Map through all trips to collect waypoints
+      trips.forEach((trip) => {
+        const tripWaypoints = stages
+          .filter((stage) => stage.trip_id === trip.id)
+          .flatMap((stage) =>
+            waypoints
+              .filter((waypoint) => waypoint.stage_id === stage.id)
+              .map((waypoint) => fromLonLat([waypoint.longitude, waypoint.latitude]))
+          );
+  
+        if (tripWaypoints.length > 0) {
+          console.log(`Adding waypoints for trip: ${trip.name} (${trip.id})`);
+          addWaypoints(tripWaypoints, trip.color);
+        } else {
+          console.log(`No waypoints for trip: ${trip.name} (${trip.id})`);
+        }
+      });
+  
+      // Fit map view to include all waypoints
+      const allWaypoints = trips.flatMap((trip) => {
+        return stages
+          .filter((stage) => stage.trip_id === trip.id)
+          .flatMap((stage) =>
+            waypoints
+              .filter((waypoint) => waypoint.stage_id === stage.id)
+              .map((waypoint) => fromLonLat([waypoint.longitude, waypoint.latitude]))
+          );
+      });
+  
+      if (allWaypoints.length > 0) {
         const extent = allWaypoints.reduce(
           (extent, coord) => {
             extent[0] = Math.min(extent[0], coord[0]); // Min X (Longitude)
@@ -46,7 +65,7 @@ export default function TripsMapSidebar({ trips, stages, waypoints }: TripsMapSi
           },
           [Infinity, Infinity, -Infinity, -Infinity]
         );
-
+  
         map.current?.getView().fit(extent, { padding: [50, 50, 50, 50], duration: 500 });
       }
     } else if (page === "stages" && selectedTrip) {
@@ -60,10 +79,10 @@ export default function TripsMapSidebar({ trips, stages, waypoints }: TripsMapSi
         );
 
       if (tripWaypoints.length === 1) {
-        addWaypoints(tripWaypoints);
+        addWaypoints(tripWaypoints, selectedTrip.color);
         map.current?.getView().animate({ center: tripWaypoints[0], zoom: 10, duration: 500 });
       } else if (tripWaypoints.length > 1) {
-        addWaypoints(tripWaypoints);
+        addWaypoints(tripWaypoints, selectedTrip.color);
 
         const extent = tripWaypoints.reduce(
           (extent, coord) => {
@@ -78,17 +97,17 @@ export default function TripsMapSidebar({ trips, stages, waypoints }: TripsMapSi
 
         map.current?.getView().fit(extent, { padding: [50, 50, 50, 50], duration: 500 });
       }
-    } else if (page === "info" && selectedStage) {
+    } else if (page === "info" && selectedStage && selectedTrip) {
       // Show waypoints for the selected stage
       const stageWaypoints = waypoints
         .filter((waypoint) => waypoint.stage_id === selectedStage.id)
         .map((waypoint) => fromLonLat([waypoint.longitude, waypoint.latitude]));
 
       if (stageWaypoints.length === 1) {
-        addWaypoints(stageWaypoints);
+        addWaypoints(stageWaypoints, selectedTrip.color);
         map.current?.getView().animate({ center: stageWaypoints[0], zoom: 10, duration: 500 });
       } else if (stageWaypoints.length > 1) {
-        addWaypoints(stageWaypoints);
+        addWaypoints(stageWaypoints, selectedTrip.color);
 
         const extent = stageWaypoints.reduce(
           (extent, coord) => {
@@ -104,7 +123,7 @@ export default function TripsMapSidebar({ trips, stages, waypoints }: TripsMapSi
         map.current?.getView().fit(extent, { padding: [50, 50, 50, 50], duration: 500 });
       }
     }
-  }, [page, selectedTrip, selectedStage, stages, waypoints, map, addWaypoints, removeWaypoints]);
+  }, [page, selectedTrip, selectedStage, stages, waypoints, map, addWaypoints, removeWaypoints, trips]);
 
   const handleBack = () => {
     if (page === "info") {

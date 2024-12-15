@@ -68,10 +68,10 @@ export default function Index() {
             >
               Experience the <FlipWords words={words} />
               <br />
-              adventures with Saga Farmann.
+              adventures with Saga Farmann
             </h1>
             <Link to="/join" prefetch="intent" aria-label="Join Us" className="mt-12">
-              <Button className="text-base font-base uppercase w-72 h-12 hover:bg-primary">Join Us</Button>
+              <Button className="text-sm md:text-base font-normal uppercase w-64 h-10 md:w-72 md:h-12 hover:bg-primary">Join Us</Button>
             </Link>
           </div>
         </div>
@@ -80,9 +80,6 @@ export default function Index() {
       {/* Main Content */}
       <main className="flex flex-col items-center w-full mt-12 px-6 md:px-12">
         <section className="container w-full py-12">
-          <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-center">
-            Social Media Highlights
-          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <Suspense
               fallback={[...Array(3)].map((_, idx) => (
@@ -109,9 +106,6 @@ export default function Index() {
           <ExplorationGrid />
         </section>
         <section className="container w-full py-12">
-          <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-center">
-            See Where We Have Been and Where We Are Going
-          </h2>
           <MapProvider>
             <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 w-full h-full">
               <div className="w-full h-64 md:h-[75vh] md:w-full rounded-lg overflow-hidden">

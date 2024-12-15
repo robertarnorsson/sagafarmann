@@ -16,7 +16,7 @@ export default function AppLayout() {
             to="https://www.facebook.com/VikingskipetSagaFarmann"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-foreground transition duration-300 md:group-hover:scale-75 md:hover:!-translate-x-1 md:hover:!scale-110"
+            className="text-foreground transition duration-300 md:hover:-translate-x-1 md:hover:scale-110"
           >
             <SiFacebook className="w-5 h-5 md:w-8 md:h-8" />
           </Link>
@@ -24,7 +24,7 @@ export default function AppLayout() {
             to="https://www.instagram.com/original_vikings_of_norway/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-foreground transition duration-300 md:group-hover:scale-75 md:hover:!-translate-x-1 md:hover:!scale-110"
+            className="text-foreground transition duration-300 md:hover:-translate-x-1 md:hover:scale-110"
           > 
             <SiInstagram className="w-5 h-5 md:w-8 md:h-8" />
           </Link>
@@ -32,7 +32,7 @@ export default function AppLayout() {
             to="https://www.youtube.com/channel/UCaPUAvRBw0i5ET79TMh2_MQ"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-foreground transition duration-300 md:group-hover:scale-75 md:hover:!-translate-x-1 md:hover:!scale-110"
+            className="text-foreground transition duration-300 md:hover:-translate-x-1 md:hover:scale-110"
           >
             <SiYoutube className="w-5 h-5 md:w-8 md:h-8" />
           </Link>

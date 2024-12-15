@@ -14,7 +14,7 @@ interface MapContextType {
   setCenter: (coords: [number, number]) => void;
   setZoom: (zoomLevel: number) => void;
   flyTo: (coords: [number, number], zoom?: number) => void;
-  addWaypoints: (waypoints: Coordinate[]) => void;
+  addWaypoints: (waypoints: Coordinate[], color: string) => void;
   removeWaypoints: () => void;
 }
 
@@ -44,52 +44,62 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const addWaypoints = (waypoints: Coordinate[]) => {
+  const addWaypoints = (waypoints: Coordinate[], color: string) => {
     if (!map.current) return;
-
-    removeWaypoints();
-
-    const vectorSource = new VectorSource();
+  
+    // Use a shared vector source to allow multiple trips' waypoints
+    let vectorSource: VectorSource;
+  
+    // Check if the layer already exists; if not, create a new one
+    if (!waypointLayerRef.current) {
+      vectorSource = new VectorSource();
+      const waypointLayer = new VectorLayer({
+        source: vectorSource,
+        updateWhileAnimating: true,
+        updateWhileInteracting: true,
+      });
+  
+      map.current.addLayer(waypointLayer);
+      waypointLayerRef.current = waypointLayer;
+    } else {
+      vectorSource = waypointLayerRef.current.getSource() as VectorSource;
+    }
+  
+    // Add features based on the number of waypoints
     if (waypoints.length === 1) {
       const pointFeature = new Feature({
         geometry: new Point(waypoints[0]),
       });
-
+  
       const pointStyle = new Style({
         image: new CircleStyle({
           radius: 6,
-          fill: new Fill({ color: '#FF0000' }),
+          fill: new Fill({ color: color }),
           stroke: new Stroke({ color: '#FFFFFF', width: 2 }),
         }),
       });
-
+  
       pointFeature.setStyle(pointStyle);
       vectorSource.addFeature(pointFeature);
     } else if (waypoints.length > 1) {
       const lineString = new LineString(waypoints);
-
+  
       const lineFeature = new Feature({
         geometry: lineString,
       });
-
+  
       const lineStyle = new Style({
         stroke: new Stroke({
-          color: '#FF0000',
+          color: color,
           width: 2,
         }),
       });
-
+  
       lineFeature.setStyle(lineStyle);
       vectorSource.addFeature(lineFeature);
     }
-
-    const waypointLayer = new VectorLayer({
-      source: vectorSource,
-    });
-
-    map.current.addLayer(waypointLayer);
-    waypointLayerRef.current = waypointLayer;
   };
+  
 
   const removeWaypoints = () => {
     if (map.current && waypointLayerRef.current) {

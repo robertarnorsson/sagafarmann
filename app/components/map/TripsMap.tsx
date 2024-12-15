@@ -41,7 +41,7 @@ const TripsMap: React.FC = () => {
       view,
       maxTilesLoading: 32, // Reduced tile loading
       controls: [],
-      interactions: [], // Disable unused interactions
+      interactions: []
     });
 
     setIsLoading(false);
